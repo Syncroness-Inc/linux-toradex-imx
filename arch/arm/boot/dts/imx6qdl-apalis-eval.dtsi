@@ -239,14 +239,6 @@
 	status = "okay";
 };
 
-&sound_spdif {
-	status = "okay";
-};
-
-&spdif {
-	status = "okay";
-};
-
 &uart1 {
 	status = "okay";
 };
