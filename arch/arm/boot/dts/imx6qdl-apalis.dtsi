@@ -220,15 +220,6 @@
 	status = "disabled";
 };
 
-/* Apalis SPI1 */
-&ecspi1 {
-	fsl,spi-num-chipselects = <1>;
-	cs-gpios = <&gpio5 25 GPIO_ACTIVE_HIGH>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_ecspi1>;
-	status = "disabled";
-};
-
 /* Apalis SPI2 */
 &ecspi2 {
 	fsl,spi-num-chipselects = <1>;
@@ -622,16 +613,6 @@
 		>;
 	};
 
-	pinctrl_ecspi1: ecspi1grp {
-		fsl,pins = <
-			MX6QDL_PAD_CSI0_DAT6__ECSPI1_MISO 0x100b1
-			MX6QDL_PAD_CSI0_DAT5__ECSPI1_MOSI 0x100b1
-			MX6QDL_PAD_CSI0_DAT4__ECSPI1_SCLK 0x100b1
-			/* SPI1 cs */
-			MX6QDL_PAD_CSI0_DAT7__GPIO5_IO25 0x000b1
-		>;
-	};
-
 	pinctrl_ecspi2: ecspi2grp {
 		fsl,pins = <
 			MX6QDL_PAD_EIM_OE__ECSPI2_MISO 0x100b1
@@ -1018,5 +999,22 @@
 			/* eMMC reset */
 			MX6QDL_PAD_SD3_RST__SD3_RESET  0x170f9
 		>;
+	};
+
+	pinctrl_input_capture: inputcapturegrp {
+		fsl,pins = <
+			MX6QDL_PAD_GPIO_16__ENET_1588_EVENT2_IN  0x0001B0B0
+			MX6QDL_PAD_GPIO_17__ENET_1588_EVENT3_IN  0x0001B0B0
+			MX6QDL_PAD_GPIO_19__ENET_1588_EVENT0_OUT 0x0001B0B0
+			MX6QDL_PAD_SD1_DAT0__GPT_CAPTURE1        0x0001B0B0
+			MX6QDL_PAD_SD1_DAT1__GPT_CAPTURE2        0x0001B0B0
+		>;
+	};
+
+	pinctrl_gpio: gpiogrp {
+		fsl,pins = <
+			MX6QDL_PAD_CSI0_DAT5__GPIO5_IO23 0x0001B0B0
+		>;
+
 	};
 };
