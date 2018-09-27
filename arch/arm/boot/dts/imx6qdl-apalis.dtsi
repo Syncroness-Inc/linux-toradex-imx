@@ -62,20 +62,6 @@
 		status = "disabled";
 	};
 
-	/* DDC_I2C: I2C2_SDA/SCL on MXM3 205/207 */
-	i2cddc: i2c@0 {
-		compatible = "i2c-gpio";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_i2c_ddc>;
-		gpios = <&gpio3 16 GPIO_ACTIVE_HIGH /* sda */
-			 &gpio2 30 GPIO_ACTIVE_HIGH /* scl */
-			>;
-		i2c-gpio,delay-us = <2>;	/* ~100 kHz */
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "disabled";
-	};
-
 	lcd: lcd@0 {
 		compatible = "fsl,lcd";
 		ipu_id = <0>;
@@ -897,14 +883,6 @@
 	pinctrl_hdmi_cec: hdmicecgrp {
 		fsl,pins = <
 			MX6QDL_PAD_KEY_ROW2__HDMI_TX_CEC_LINE 0x1f8b0
-		>;
-	};
-
-	pinctrl_i2c_ddc: gpioi2cddcgrp {
-		fsl,pins = <
-			/* DDC bitbang */
-			MX6QDL_PAD_EIM_EB2__GPIO2_IO30 PAD_CTRL_HYS_PU
-			MX6QDL_PAD_EIM_D16__GPIO3_IO16 PAD_CTRL_HYS_PU
 		>;
 	};
 
