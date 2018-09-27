@@ -291,8 +291,7 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 (e.g. RTC on carrier
- * board)
+ * GEN1_I2C: I2C1_SDA/SCL - IR Sensor I2C
  */
 &i2c1 {
 	clock-frequency = <100000>;
@@ -302,8 +301,7 @@
 };
 
 /*
- * PWR_I2C: power I2C to audio codec, PMIC, temperature sensor and
- * touch screen controller
+ * GEN2_I2C: I2C2_SDA/SCL - LED I2c
  */
 &i2c2 {
 	clock-frequency = <100000>;
@@ -313,11 +311,11 @@
 };
 
 /*
- * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 201/203 (unused)
+ * GEN3_I2C, CAM: I2C3_SDA/SCL - Pressure Sensor I2C
  */
 &i2c3 {
 	clock-frequency = <100000>;
-	pinctrl-names = "default", "recovery";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c3>;
 	status = "disabled";
 };

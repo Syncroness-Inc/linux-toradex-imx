@@ -28,7 +28,6 @@
 	};
 
 	aliases {
-		rtc0 = &rtc_i2c;
 		rtc1 = &snvs_rtc;
 	};
 
@@ -146,119 +145,24 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 (e.g. RTC on carrier
- * board)
+ * GEN1_I2C: I2C1_SDA/SCL - IR Sensor I2C
  */
 &i2c1 {
 	status = "okay";
-
-	/* Atmel maxtouch controller */
-	atmel_mxt_ts: atmel_mxt_ts@4a {
-		compatible = "atmel,maxtouch";
-		reg = <0x4a>;
-		interrupt-parent = <&gpio6>;
-		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
-		status = "disabled";
-	};
-
-	pcap@10 {
-		/* TouchRevolution Fusion 7 and 10 multi-touch controller */
-		compatible = "touchrevolution,fusion-f0710a";
-		reg = <0x10>;
-		gpios = <&gpio6 10 0 /* MXM3 11, Pen down interrupt */
-			 &gpio6  9 0 /* MXM3 13, Reset */
-			>;
-	};
-
-	pcie-switch@58 {
-		compatible = "plx,pex8605";
-		reg = <0x58>;
-	};
-
-	/* M41T0M6 real time clock on carrier board */
-	rtc_i2c: rtc@68 {
-		compatible = "st,m41t0";
-		reg = <0x68>;
-	};
 };
 
 /*
- * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 201/203 (unused)
+ * GEN2_I2C: I2C2_SDA/SCL - LED I2c
+ */
+&i2c2 {
+	status = "okay";
+};
+
+/*
+ * GEN3_I2C, CAM: I2C3_SDA/SCL - Pressure Sensor I2C
  */
 &i2c3 {
 	status = "okay";
-
-	adv7280: adv7280@21 {
-		compatible = "adv7280";
-		reg = <0x21>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_ipu1_csi0 &pinctrl_cam_mclk>;
-		clocks = <&clks 200>;
-		clock-names = "csi_mclk";
-		DOVDD-supply = <&reg_3p3v>;
-		AVDD-supply = <&reg_3p3v>;
-		DVDD-supply = <&reg_3p3v>;
-		PVDD-supply = <&reg_3p3v>;
-		csi_id = <0>;
-		mclk = <24000000>;
-		mclk_source = <1>;
-		status = "okay";
-	};
-
-	/* Video ADC on Analog Camera Module */
-	adv7180: adv7180@21 {
-		compatible = "adv,adv7180";
-		reg = <0x21>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_ipu1_csi0 &pinctrl_cam_mclk>;
-		clocks = <&clks 200>;
-		clock-names = "csi_mclk";
-		DOVDD-supply = <&reg_3p3v>; /* 3.3v */
-		AVDD-supply = <&reg_3p3v>;  /* 1.8v */
-		DVDD-supply = <&reg_3p3v>;  /* 1.8v */
-		PVDD-supply = <&reg_3p3v>;  /* 1.8v */
-		csi_id = <0>;
-		mclk = <24000000>;
-		mclk_source = <1>;
-		cvbs = <1>;
-		status = "disabled";
-	};
-
-	max9526: max9526@20 {
-		compatible = "maxim,max9526";
-		reg = <0x20>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_ipu1_csi0 &pinctrl_cam_mclk>;
-		clocks = <&clks 200>;
-		clock-names = "csi_mclk";
-		DVDDIO-supply = <&reg_3p3v>; /* 3.3v */
-		AVDD-supply = <&reg_3p3v>;  /* 1.8v */
-		DVDD-supply = <&reg_3p3v>;  /* 1.8v */
-		csi_id = <0>;
-		mclk = <24000000>;
-		mclk_source = <1>;
-		cvbs = <1>;
-		status = "okay";
-	};
-
-	ov5640_mipi@3c {
-		compatible = "ovti,ov564x_mipi";
-		reg = <0x3c>;
-		clocks = <&clks 147>;
-		clock-names = "csi_mclk";
-		DOVDD-supply = <&reg_1p8v>;
-		AVDD-supply = <&reg_2p5v>;
-		DVDD-supply = <&reg_1p8v>;
-		pwn-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
-		rst-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
-		ipu_id = <0>;
-		csi_id = <1>;
-		mclk = <22000000>;
-		mclk_source = <0>;
-		pwms = <&pwm3 0 45 0>;
-		status = "okay";
-	};
 };
 
 &iomuxc {
