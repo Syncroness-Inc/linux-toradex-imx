@@ -178,20 +178,6 @@
 		status = "disabled";
 	};
 
-	sound {
-		compatible = "fsl,imx-audio-sgtl5000";
-		model = "imx6q-apalis-sgtl5000";
-		cpu-dai = <&ssi1>;
-		audio-codec = <&codec>;
-		audio-routing =
-			"LINE_IN", "Line In Jack",
-			"MIC_IN", "Mic Jack",
-			"Mic Jack", "Mic Bias",
-			"Headphone Jack", "HP_OUT";
-		mux-int-port = <1>;
-		mux-ext-port = <4>;
-	};
-
 	sound_hdmi: sound-hdmi {
 		compatible = "fsl,imx6q-audio-hdmi",
 			     "fsl,imx-audio-hdmi";
@@ -324,159 +310,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c2>;
 	status = "okay";
-
-	pmic: pfuze100@08 {
-		compatible = "fsl,pfuze100";
-		reg = <0x08>;
-
-		regulators {
-			sw1a_reg: sw1ab {
-				regulator-min-microvolt = <300000>;
-				regulator-max-microvolt = <1875000>;
-				regulator-boot-on;
-				regulator-always-on;
-				regulator-ramp-delay = <6250>;
-			};
-
-			sw1c_reg: sw1c {
-				regulator-min-microvolt = <300000>;
-				regulator-max-microvolt = <1875000>;
-				regulator-boot-on;
-				regulator-always-on;
-				regulator-ramp-delay = <6250>;
-			};
-
-			sw3a_reg: sw3a {
-				regulator-min-microvolt = <400000>;
-				regulator-max-microvolt = <1975000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			swbst_reg: swbst {
-				regulator-min-microvolt = <5000000>;
-				regulator-max-microvolt = <5150000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			snvs_reg: vsnvs {
-				regulator-min-microvolt = <1000000>;
-				regulator-max-microvolt = <3000000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vref_reg: vrefddr {
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vgen1_reg: vgen1 {
-				regulator-min-microvolt = <800000>;
-				regulator-max-microvolt = <1550000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vgen2_reg: vgen2 {
-				regulator-min-microvolt = <800000>;
-				regulator-max-microvolt = <1550000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vgen3_reg: vgen3 {
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vgen4_reg: vgen4 {
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vgen5_reg: vgen5 {
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-
-			vgen6_reg: vgen6 {
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
-				regulator-boot-on;
-				regulator-always-on;
-			};
-		};
-	};
-
-	codec: sgtl5000@0a {
-		compatible = "fsl,sgtl5000";
-		reg = <0x0a>;
-		clocks = <&clks IMX6QDL_CLK_CKO>;
-		VDDA-supply = <&reg_2p5v>;
-		VDDIO-supply = <&reg_3p3v>;
-		VDDD-supply =<&reg_1p8v>;
-	};
-
-	/* STMPE811 touch screen controller */
-	stmpe811@41 {
-		compatible = "st,stmpe811";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_touch_int>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		reg = <0x41>;
-		interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
-		interrupt-parent = <&gpio4>;
-		interrupt-controller;
-		id = <0>;
-		blocks = <0x5>;
-		irq-trigger = <0x1>;
-
-		stmpe_touchscreen {
-			compatible = "st,stmpe-ts";
-			reg = <0>;
-			/* 3.25 MHz ADC clock speed */
-			st,adc-freq = <1>;
-			/* 8 sample average control */
-			st,ave-ctrl = <3>;
-			/* 7 length fractional part in z */
-			st,fraction-z = <7>;
-			/*
-			 * 50 mA typical 80 mA max touchscreen drivers
-			 * current limit value
-			 */
-			st,i-drive = <1>;
-			/* 12-bit ADC */
-			st,mod-12b = <1>;
-			/* internal ADC reference */
-			st,ref-sel = <0>;
-			/* ADC converstion time: 80 clocks */
-			st,sample-time = <4>;
-			/* 1 ms panel driver settling time */
-			st,settling = <3>;
-			/* 5 ms touch detect interrupt delay */
-			st,touch-det-delay = <5>;
-		};
-		stmpe_adc {
-			compatible = "st,stmpe-adc";
-			/* 3.25 MHz ADC clock speed */
-			st,adc-freq = <1>;
-			/* 12-bit ADC */
-			st,mod-12b = <1>;
-			/* internal ADC reference */
-			st,ref-sel = <0>;
-			/* ADC converstion time: 80 clocks */
-			st,sample-time = <4>;
-		};
-	};
 };
 
 /*
@@ -486,9 +319,6 @@
 	clock-frequency = <100000>;
 	pinctrl-names = "default", "recovery";
 	pinctrl-0 = <&pinctrl_i2c3>;
-	pinctrl-1 = <&pinctrl_i2c3_recovery>;
-	scl-gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
 	status = "disabled";
 };
 
@@ -904,13 +734,6 @@
 		fsl,pins = <
 			MX6QDL_PAD_GPIO_3__I2C3_SCL 0x4001b8b1
 			MX6QDL_PAD_GPIO_6__I2C3_SDA 0x4001b8b1
-		>;
-	};
-
-	pinctrl_i2c3_recovery: i2c3recoverygrp {
-		fsl,pins = <
-			MX6QDL_PAD_EIM_D17__GPIO3_IO17 0x4001b8b1
-			MX6QDL_PAD_EIM_D18__GPIO3_IO18 0x4001b8b1
 		>;
 	};
 
