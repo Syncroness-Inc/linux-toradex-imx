@@ -98,17 +98,6 @@
 	status = "okay";
 };
 
-/* Apalis SPI2 */
-&ecspi2 {
-	status = "okay";
-
-	spidev1: spidev@2 {
-		compatible = "toradex,evalspi";
-		reg = <0>;
-		spi-max-frequency = <18000000>;
-	};
-};
-
 &can1 {
 	status = "okay";
 };
@@ -168,10 +157,6 @@
 		     &pinctrl_apalis_gpio7 &pinctrl_apalis_gpio8>;
 };
 
-&lcd {
-	status = "okay";
-};
-
 &mxcfb1 {
 	status = "okay";
 };
@@ -209,10 +194,6 @@
 };
 
 &pwm4 {
-	status = "okay";
-};
-
-&reg_usb_otg_vbus {
 	status = "okay";
 };
 

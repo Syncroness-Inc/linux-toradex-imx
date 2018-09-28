@@ -177,10 +177,6 @@
 	};
 };
 
-&lcd {
-	status = "okay";
-};
-
 &mipi_csi {
 	ipu_id = <0>;
 	csi_id = <1>;
@@ -223,10 +219,6 @@
 };
 
 &pwm4 {
-	status = "okay";
-};
-
-&reg_usb_otg_vbus {
 	status = "okay";
 };
 
