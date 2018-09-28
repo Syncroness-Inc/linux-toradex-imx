@@ -154,6 +154,19 @@
 		enable-active-high;
 		status = "okay";
 	};
+	
+	reg_usb_host_vbus: regulator-usb-host-vbus {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_regulator_usbh_pwr>;
+		regulator-name = "usb_host_vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpio =  <&gpio1 0 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		vin-supply = <&reg_usb_host_vbus_hub>;
+		status = "disabled";
+	};
 
 	sound_hdmi: sound-hdmi {
 		compatible = "fsl,imx6q-audio-hdmi",
@@ -436,6 +449,11 @@
 	status = "disabled";
 };
 
+&usbh1 {
+	vbus-supply = <&reg_usb_host_vbus>;
+	status = "disabled";
+};
+
 /* MMC1 */
 &usdhc1 {
 	pinctrl-names = "default";
@@ -643,6 +661,13 @@
 		fsl,pins = <
 			/* USBH_HUB_EN */
 			MX6QDL_PAD_EIM_D28__GPIO3_IO28 PAD_CTRL_PU_22k
+		>;
+	};
+
+	pinctrl_regulator_usbh_pwr: gpioregusbhpwrgrp {
+		fsl,pins = <
+			/* USBH_EN */
+			MX6QDL_PAD_GPIO_0__GPIO1_IO00 PAD_CTRL_PU_22k
 		>;
 	};
 

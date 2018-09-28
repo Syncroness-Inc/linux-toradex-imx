@@ -191,6 +191,10 @@
 	status = "okay";
 };
 
+&reg_usb_host_vbus {
+	status = "okay";
+};
+
 &sata {
 	status = "okay";
 };
