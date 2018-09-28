@@ -129,6 +129,18 @@
 		regulator-always-on;
 	};
 
+	reg_usb_otg_vbus: regulator-usb-otg-vbus {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_regulator_usbotg_pwr>;
+		regulator-name = "usb_otg_vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpio = <&gpio3 22 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		status = "disabled";
+	};
+
 	/* on module USB hub */
 	reg_usb_host_vbus_hub: regulator-usb-host-vbus-hub {
 		compatible = "regulator-fixed";
@@ -171,18 +183,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_audmux>;
 	status = "okay";
-};
-
-&can1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_flexcan1>;
-	status = "disabled";
-};
-
-&can2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_flexcan2>;
-	status = "disabled";
 };
 
 &fec {
@@ -428,6 +428,14 @@
 	status = "disabled";
 };
 
+&usbotg {
+	vbus-supply = <&reg_usb_otg_vbus>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usbotg>;
+	disable-over-current;
+	status = "disabled";
+};
+
 /* MMC1 */
 &usdhc1 {
 	pinctrl-names = "default";
@@ -522,20 +530,6 @@
 			MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25	0x000b0
 			/* Ethernet PHY interrupt */
 			MX6QDL_PAD_ENET_TXD0__GPIO1_IO30	0x000b1
-		>;
-	};
-
-	pinctrl_flexcan1: flexcan1grp {
-		fsl,pins = <
-			MX6QDL_PAD_GPIO_7__FLEXCAN1_TX PAD_CTRL_HYS_PU
-			MX6QDL_PAD_GPIO_8__FLEXCAN1_RX PAD_CTRL_HYS_PU
-		>;
-	};
-
-	pinctrl_flexcan2: flexcan2grp {
-		fsl,pins = <
-			MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX PAD_CTRL_HYS_PU
-			MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX PAD_CTRL_HYS_PU
 		>;
 	};
 
@@ -801,6 +795,13 @@
 		>;
 	};
 
+	pinctrl_regulator_usbotg_pwr: gpioregusbotgpwrgrp {
+		fsl,pins = <
+		/* USBO1 power en */
+			MX6QDL_PAD_EIM_D22__GPIO3_IO22 PAD_CTRL_PU_22k
+		>;
+	};
+
 	pinctrl_gpio: gpiogrp {
 		fsl,pins = <
 			MX6QDL_PAD_CSI0_DAT5__GPIO5_IO23   0x0001B0B0
@@ -819,7 +820,7 @@
 			MX6QDL_PAD_EIM_D19__GPIO3_IO19     0x0001B0B0
 			MX6QDL_PAD_EIM_D20__GPIO3_IO20     0x0001B0B0
 			MX6QDL_PAD_EIM_D21__GPIO3_IO21     0x0001B0B0
-			MX6QDL_PAD_EIM_D22__GPIO3_IO22     0x0001B0B0
+			MX6QDL_PAD_GPIO_8__GPIO1_IO08      0x0001B0B0
 			MX6QDL_PAD_EIM_OE__GPIO2_IO25      0x0001B0B0
 			MX6QDL_PAD_GPIO_0__GPIO1_IO00      0x0001B0B0
 			MX6QDL_PAD_GPIO_2__GPIO1_IO02      0x0001B0B0

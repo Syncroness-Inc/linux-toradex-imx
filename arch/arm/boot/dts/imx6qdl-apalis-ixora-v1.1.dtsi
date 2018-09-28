@@ -109,14 +109,6 @@
 	status = "okay";
 };
 
-&can1 {
-	status = "okay";
-};
-
-&can2 {
-	status = "okay";
-};
-
 &hdmi_audio {
 	status = "okay";
 };

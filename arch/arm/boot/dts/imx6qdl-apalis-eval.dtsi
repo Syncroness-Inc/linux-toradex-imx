@@ -98,14 +98,6 @@
 	status = "okay";
 };
 
-&can1 {
-	status = "okay";
-};
-
-&can2 {
-	status = "okay";
-};
-
 &hdmi_audio {
 	status = "okay";
 };
@@ -127,6 +119,11 @@
  */
 &i2c1 {
 	status = "okay";
+	
+	rtc_i2c: rtc@68 {
+		compatible = "st,m41t0";
+		reg = <0x68>;
+	};
 };
 
 /*
@@ -187,6 +184,10 @@
 };
 
 &pwm3 {
+	status = "okay";
+};
+
+&reg_usb_otg_vbus {
 	status = "okay";
 };
 
