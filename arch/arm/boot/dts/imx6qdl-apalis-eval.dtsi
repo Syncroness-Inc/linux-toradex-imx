@@ -190,10 +190,6 @@
 	status = "okay";
 };
 
-&pwm4 {
-	status = "okay";
-};
-
 &sata {
 	status = "okay";
 };
