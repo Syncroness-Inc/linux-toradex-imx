@@ -115,7 +115,7 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL - IR Sensor I2C
+ * GEN1_I2C: I2C1_SDA/SCL - Pressure Sensor I2C
  */
 &i2c1 {
 	status = "okay";
@@ -134,7 +134,7 @@
 };
 
 /*
- * GEN3_I2C, CAM: I2C3_SDA/SCL - Pressure Sensor I2C
+ * GEN3_I2C, CAM: I2C3_SDA/SCL - IR Sensor I2C
  */
 &i2c3 {
 	status = "okay";
