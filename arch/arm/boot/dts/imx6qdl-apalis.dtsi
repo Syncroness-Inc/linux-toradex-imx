@@ -143,19 +143,6 @@
 		status = "okay";
 	};
 
-	reg_usb_host_vbus: regulator-usb-host-vbus {
-		compatible = "regulator-fixed";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_regulator_usbh_pwr>;
-		regulator-name = "usb_host_vbus";
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		gpio =  <&gpio1 0 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		vin-supply = <&reg_usb_host_vbus_hub>;
-		status = "disabled";
-	};
-
 	sound_hdmi: sound-hdmi {
 		compatible = "fsl,imx6q-audio-hdmi",
 			     "fsl,imx-audio-hdmi";
@@ -447,18 +434,6 @@
 	status = "disabled";
 };
 
-&uart5 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_uart5_dte>;
-	fsl,dte-mode;
-	status = "disabled";
-};
-
-&usbh1 {
-	vbus-supply = <&reg_usb_host_vbus>;
-	status = "disabled";
-};
-
 /* MMC1 */
 &usdhc1 {
 	pinctrl-names = "default";
@@ -507,48 +482,6 @@
 	/* pins used on module */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_reset_moci>;
-
-	pinctrl_apalis_gpio1: gpio2io04grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D4__GPIO2_IO04 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio2: gpio2io05grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D5__GPIO2_IO05 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio3: gpio2io06grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D6__GPIO2_IO06 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio4: gpio2io07grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D7__GPIO2_IO07 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio5: gpio6io10grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_RB0__GPIO6_IO10 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio6: gpio6io09grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_WP_B__GPIO6_IO09 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio7: gpio1io02grp {
-		fsl,pins = <
-			MX6QDL_PAD_GPIO_2__GPIO1_IO02 PAD_CTRL_HYS_PD
-		>;
-	};
 
 	pinctrl_apalis_gpio8: gpio1io06grp {
 		fsl,pins = <
@@ -724,13 +657,6 @@
 		>;
 	};
 
-	pinctrl_regulator_usbh_pwr: gpioregusbhpwrgrp {
-		fsl,pins = <
-			/* USBH_EN */
-			MX6QDL_PAD_GPIO_0__GPIO1_IO00 PAD_CTRL_PU_22k
-		>;
-	};
-
 	pinctrl_regulator_usbhub_pwr: gpioregusbhubpwrgrp {
 		fsl,pins = <
 			/* USBH_HUB_EN */
@@ -797,21 +723,6 @@
 		fsl,pins = <
 			MX6QDL_PAD_KEY_COL0__UART4_RX_DATA 0x1b0b1
 			MX6QDL_PAD_KEY_ROW0__UART4_TX_DATA 0x1b0b1
-		>;
-	};
-
-	pinctrl_uart5_dce: uart5dcegrp {
-		fsl,pins = <
-			MX6QDL_PAD_KEY_COL1__UART5_TX_DATA 0x1b0b1
-			MX6QDL_PAD_KEY_ROW1__UART5_RX_DATA 0x1b0b1
-		>;
-	};
-
-	/* DTE mode */
-	pinctrl_uart5_dte: uart5dtegrp {
-		fsl,pins = <
-			MX6QDL_PAD_KEY_COL1__UART5_RX_DATA 0x1b0b1
-			MX6QDL_PAD_KEY_ROW1__UART5_TX_DATA 0x1b0b1
 		>;
 	};
 
@@ -922,7 +833,12 @@
 			MX6QDL_PAD_EIM_D21__GPIO3_IO21     0x0001B0B0
 			MX6QDL_PAD_EIM_D22__GPIO3_IO22     0x0001B0B0
 			MX6QDL_PAD_EIM_OE__GPIO2_IO25      0x0001B0B0
+			MX6QDL_PAD_GPIO_0__GPIO1_IO00      0x0001B0B0
+			MX6QDL_PAD_GPIO_2__GPIO1_IO02      0x0001B0B0
+			MX6QDL_PAD_KEY_COL1__GPIO4_IO08    0x0001B0B0
+			MX6QDL_PAD_KEY_ROW1__GPIO4_IO09    0x0001B0B0
+			MX6QDL_PAD_NANDF_D4__GPIO2_IO04    0x0001B0B0
+			MX6QDL_PAD_NANDF_D5__GPIO2_IO05    0x0001B0B0
 		>;
-
 	};
 };
