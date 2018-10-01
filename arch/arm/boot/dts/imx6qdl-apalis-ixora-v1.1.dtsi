@@ -270,18 +270,6 @@
 };
 
 &iomuxc {
-	/*
-	 * Mux the Apalis GPIOs.
-	 * Note:
-	 * - GPIO7 is used for PCIe reset
-	 * - GPIO5, 6 are used by optional capacitive touch controller
-	 */
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_apalis_gpio1 &pinctrl_apalis_gpio2
-		     &pinctrl_apalis_gpio3 &pinctrl_apalis_gpio4
-		     &pinctrl_apalis_gpio5 &pinctrl_apalis_gpio6
-		     &pinctrl_apalis_gpio7 &pinctrl_apalis_gpio8>;
-
 	pinctrl_leds_ixora: leds-ixora {
 		fsl,pins = <
 			MX6QDL_PAD_SD2_DAT1__GPIO1_IO14 PAD_CTRL_HYS_PU
@@ -354,14 +342,6 @@
 };
 
 &sound_hdmi {
-	status = "okay";
-};
-
-&sound_spdif {
-	status = "okay";
-};
-
-&spdif {
 	status = "okay";
 };
 

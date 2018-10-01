@@ -214,15 +214,6 @@
 		status = "disabled";
 	};
 
-	sound_spdif: sound-spdif {
-		compatible = "fsl,imx-audio-spdif";
-		model = "imx-spdif";
-		spdif-controller = <&spdif>;
-		spdif-in;
-		spdif-out;
-		status = "disabled";
-	};
-
 	vdac: vdac@0 {
 		compatible = "fsl,vdac";
 		ipu_id = <1>;
@@ -655,12 +646,6 @@
 	status = "disabled";
 };
 
-&spdif {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_spdif>;
-	status = "disabled";
-};
-
 &ssi1 {
 	status = "okay";
 };
@@ -756,54 +741,6 @@
 	/* pins used on module */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_reset_moci>;
-
-	pinctrl_apalis_gpio1: gpio2io04grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D4__GPIO2_IO04 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio2: gpio2io05grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D5__GPIO2_IO05 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio3: gpio2io06grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D6__GPIO2_IO06 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio4: gpio2io07grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_D7__GPIO2_IO07 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio5: gpio6io10grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_RB0__GPIO6_IO10 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio6: gpio6io09grp {
-		fsl,pins = <
-			MX6QDL_PAD_NANDF_WP_B__GPIO6_IO09 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio7: gpio1io02grp {
-		fsl,pins = <
-			MX6QDL_PAD_GPIO_2__GPIO1_IO02 PAD_CTRL_HYS_PD
-		>;
-	};
-
-	pinctrl_apalis_gpio8: gpio1io06grp {
-		fsl,pins = <
-			MX6QDL_PAD_GPIO_6__GPIO1_IO06 PAD_CTRL_HYS_PD
-		>;
-	};
 
 	pinctrl_audmux: audmuxgrp {
 		fsl,pins = <
@@ -1076,13 +1013,6 @@
 		fsl,pins = <
 			/* SD1 CD */
 			MX6QDL_PAD_NANDF_CS1__GPIO6_IO14 0x000b0
-		>;
-	};
-
-	pinctrl_spdif: spdifgrp {
-		fsl,pins = <
-			MX6QDL_PAD_GPIO_16__SPDIF_IN  PAD_CTRL_HYS_PU
-			MX6QDL_PAD_GPIO_17__SPDIF_OUT PAD_CTRL_HYS_PU
 		>;
 	};
 
