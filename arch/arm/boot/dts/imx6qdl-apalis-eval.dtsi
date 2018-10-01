@@ -86,20 +86,6 @@
 	status = "okay";
 };
 
-&backlight {
-#if 0 /* PWM polarity: if 1 is brightest */
-	pwms = <&pwm4 0 5000000 0>;
-#if 0 /* Fusion 7 needs 10kHz PWM frequency */
-	pwms = <&pwm4 0 100000 0>;
-#endif
-#else /* PWM polarity: if 0 is brightest */
-	pwms = <&pwm4 0 5000000 1>;
-#endif
-	brightness-levels = <0 4 8 16 32 64 128 255>;
-	default-brightness-level = <6>;
-	status = "okay";
-};
-
 /* Apalis SPI1 */
 &ecspi1 {
 	status = "okay";
@@ -120,14 +106,6 @@
 		reg = <0>;
 		spi-max-frequency = <18000000>;
 	};
-};
-
-&can1 {
-	status = "okay";
-};
-
-&can2 {
-	status = "okay";
 };
 
 &hdmi_audio {
@@ -272,10 +250,6 @@
 		compatible = "fsl,imx6-hdmi-i2c";
 		reg = <0x50>;
 	};
-};
-
-&lcd {
-	status = "okay";
 };
 
 &mxcfb1 {
