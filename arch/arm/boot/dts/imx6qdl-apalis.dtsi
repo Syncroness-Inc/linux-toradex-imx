@@ -271,8 +271,7 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 (e.g. RTC on carrier
- * board)
+ * TEMP and RTC: I2C1
  */
 &i2c1 {
 	clock-frequency = <100000>;
@@ -446,15 +445,12 @@
 };
 
 /*
- * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 201/203 (unused)
+ * OPTICS: I2C3
  */
 &i2c3 {
 	clock-frequency = <100000>;
-	pinctrl-names = "default", "recovery";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c3>;
-	pinctrl-1 = <&pinctrl_i2c3_recovery>;
-	scl-gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
 	status = "disabled";
 };
 
@@ -792,8 +788,8 @@
 
 	pinctrl_i2c3: i2c3grp {
 		fsl,pins = <
-			MX6QDL_PAD_EIM_D17__I2C3_SCL 0x4001b8b1
-			MX6QDL_PAD_EIM_D18__I2C3_SDA 0x4001b8b1
+			MX6QDL_PAD_GPIO_3__I2C3_SCL 0x4001b8b1
+			MX6QDL_PAD_GPIO_6__I2C3_SDA 0x4001b8b1
 		>;
 	};
 
