@@ -351,7 +351,7 @@
 /* MMC1 */
 &usdhc1 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_usdhc1_4bit &pinctrl_mmc_cd>;
+	pinctrl-0 = <&pinctrl_mmc_cd>;
 	bus-width = <4>;
 	status = "okay";
 };
