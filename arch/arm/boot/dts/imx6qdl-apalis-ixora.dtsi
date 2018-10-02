@@ -257,14 +257,6 @@
 	status = "okay";
 };
 
-&pwm1 {
-	status = "okay";
-};
-
-&pwm2 {
-	status = "okay";
-};
-
 &reg_usb_otg_vbus {
 	status = "okay";
 };
