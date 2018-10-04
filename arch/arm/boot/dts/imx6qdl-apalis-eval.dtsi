@@ -157,6 +157,11 @@
 	};
 };
 
+&iomuxc {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_cytometry_gpio>;
+};
+
 &mxcfb1 {
 	status = "okay";
 };
