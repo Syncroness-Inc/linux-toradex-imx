@@ -805,6 +805,7 @@ static int mxc_timer_probe(struct platform_device *pdev)
 			ic->mode_bit = V2_TCTL_IM2_BIT;
 		}
 	}
+	printk("gpt_input_capture: probed successfully");
 
 	return 0;
 }
