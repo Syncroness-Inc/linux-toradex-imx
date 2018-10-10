@@ -661,6 +661,12 @@
 	status = "okay";
 };
 
+&gpt {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpt_input_cap>;
+	status = "okay";
+};
+
 &weim {
 	status = "disabled";
 };
