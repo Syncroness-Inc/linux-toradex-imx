@@ -114,6 +114,8 @@ struct icap_channel {
 /* FIXME, for now can't find icap unless it's statically allocated */
 static struct icap_channel icap_channel[2];
 static DEFINE_SPINLOCK(icap_lock);
+static int dev_id_pump = 1;
+static int dev_id_exhaust = 2;
 
 struct imx_timer {
 	enum imx_gpt_type type;
@@ -617,6 +619,16 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 	.gpt_ic_disable = imx6dl_gpt_ic_disable,
 };
 
+void capture_tach_pump(int chan, void* dev_id, struct timespec* ts)
+{
+	printk("Called capture_tach_pump - MXM 160");
+}
+
+void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
+{
+	printk("Called catpure_tach_exhaust_fan - MXM 162");
+}
+
 int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, unsigned long capflags, void *dev_id)
 {
 	struct imx_timer *imxtm;
@@ -806,7 +818,9 @@ static int mxc_timer_probe(struct platform_device *pdev)
 		}
 	}
 	printk("gpt_input_capture: probed successfully");
-
+	printk("Request mxc input captures");
+	mxc_request_input_capture(0, capture_tach_pump, IRQF_TRIGGER_RISING, &dev_id_pump);
+	mxc_request_input_capture(1, capture_tach_exhaust_fan, IRQF_TRIGGER_RISING, &dev_id_exhaust); 
 	return 0;
 }
 
