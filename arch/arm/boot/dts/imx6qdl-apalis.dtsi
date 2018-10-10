@@ -1016,12 +1016,17 @@
 		>;
 	};
 
-	pinctrl_input_cap: inputcapgrp {
+	pinctrl_gpt_input_cap: gptinputcapgrp {
+		fsl,pins = <
+			MX6QDL_PAD_SD1_DAT0__GPT_CAPTURE1       0x0001B0B0 /* EXHAUST_TACH_IO */
+			MX6QDL_PAD_SD1_DAT1__GPT_CAPTURE2       0x0001B0B0 /* PELTIER_TACH_IO */
+		>;
+	};
+
+	pinctrl_ieee_input_cap: ieeeinputcapgrp {
 		fsl,pins = <
 			MX6QDL_PAD_GPIO_16__ENET_1588_EVENT2_IN 0x0001B0B0 /* ELEC_TACH_IO */
 			MX6QDL_PAD_GPIO_17__ENET_1588_EVENT3_IN 0x0001B0B0 /* PUMP_TACH_IO */
-			MX6QDL_PAD_SD1_DAT0__GPT_CAPTURE1       0x0001B0B0 /* EXHAUST_TACH_IO */
-			MX6QDL_PAD_SD1_DAT1__GPT_CAPTURE2       0x0001B0B0 /* PELTIER_TACH_IO */
 		>;
 	};
 
