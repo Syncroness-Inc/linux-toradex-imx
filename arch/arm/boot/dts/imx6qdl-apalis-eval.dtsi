@@ -125,8 +125,7 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 (e.g. RTC on carrier
- * board)
+ * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 OPTICS
  */
 &i2c1 {
 	status = "okay";
@@ -139,7 +138,7 @@
 };
 
 /*
- * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 201/203 (unused)
+ * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 17/96 TEMPERATURE
  */
 &i2c3 {
 	status = "okay";
