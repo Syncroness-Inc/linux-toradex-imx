@@ -278,12 +278,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c1>;
 	status = "disabled";
-
-	accel: mma8452@1d {
-		compatible = "fsl,mma8452";
-		reg = <0x1d>;
-		interrupt-parent
-	}
 };
 
 /*
