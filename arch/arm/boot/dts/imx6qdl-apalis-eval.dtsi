@@ -104,7 +104,7 @@
 	spidev1: spidev@2 {
 		compatible = "toradex,evalspi";
 		reg = <0>;
-		spi-max-frequency = <18000000>;
+		spi-max-frequency = <800000>;
 	};
 };
 
