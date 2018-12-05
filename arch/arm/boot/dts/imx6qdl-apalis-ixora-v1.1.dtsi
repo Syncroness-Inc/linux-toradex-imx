@@ -13,7 +13,6 @@
 
 / {
 	aliases {
-		i2c0 = &i2cddc;
 		i2c1 = &i2c1;
 		i2c2 = &i2c2;
 		i2c3 = &i2c3;
@@ -28,7 +27,6 @@
 	};
 
 	aliases {
-		rtc0 = &rtc_i2c;
 		rtc1 = &snvs_rtc;
 	};
 
@@ -125,42 +123,16 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 (e.g. RTC on carrier
- * board)
+ * GEN1_I2C: I2C1_SDA/SCL - IR Sensor I2C
  */
 &i2c1 {
 	status = "okay";
-
-	/* Atmel maxtouch controller */
-	atmel_mxt_ts: atmel_mxt_ts@4a {
-		compatible = "atmel,maxtouch";
-		reg = <0x4a>;
-		interrupt-parent = <&gpio6>;
-		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
-		status = "disabled";
-	};
-
-	pcap@10 {
-		/* TouchRevolution Fusion 7 and 10 multi-touch controller */
-		compatible = "touchrevolution,fusion-f0710a";
-		reg = <0x10>;
-		gpios = <&gpio6 10 GPIO_ACTIVE_HIGH /* MXM3 11, Pen down interrupt */
-			 &gpio6  9 GPIO_ACTIVE_HIGH /* MXM3 13, Reset */
-			>;
-	};
-
-	/* M41T0M6 real time clock on carrier board */
-	rtc_i2c: rtc@68 {
-		compatible = "st,m41t0";
-		reg = <0x68>;
-	};
 };
 
 /*
- * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 201/203 (unused)
+ * GEN2_I2C: I2C2_SDA/SCL - LED I2c
  */
-&i2c3 {
+&i2c2 {
 	status = "okay";
 
 	adv7280: adv7280@21 {
@@ -219,18 +191,14 @@
 };
 
 /*
- * DDC_I2C: I2C2_SDA/SCL on MXM3 205/207
+ * GEN3_I2C, CAM: I2C3_SDA/SCL - Pressure Sensor I2C
  */
-&i2cddc {
+&i2c3 {
 	status = "okay";
-
-	hdmi_ddc: edid@50 {
-		compatible = "fsl,imx6-hdmi-i2c";
-		reg = <0x50>;
-	};
 };
 
 &iomuxc {
+
 	pinctrl_leds_ixora: leds-ixora {
 		fsl,pins = <
 			MX6QDL_PAD_SD2_DAT1__GPIO1_IO14 PAD_CTRL_HYS_PU
@@ -300,10 +268,6 @@
 };
 
 &uart4 {
-	status = "okay";
-};
-
-&uart5 {
 	status = "okay";
 };
 
