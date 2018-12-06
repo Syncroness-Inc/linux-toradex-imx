@@ -84,18 +84,27 @@
 	status = "okay";
 };
 
-&backlight {
-#if 0 /* PWM polarity: if 1 is brightest */
-	pwms = <&pwm4 0 5000000 0>;
-#if 0 /* Fusion 7 needs 10kHz PWM frequency */
-	pwms = <&pwm4 0 100000 0>;
-#endif
-#else /* PWM polarity: if 0 is brightest */
-	pwms = <&pwm4 0 5000000 1>;
-#endif
-	brightness-levels = <0 4 8 16 32 64 128 255>;
-	default-brightness-level = <6>;
+/* Apalis SPI1 */
+&ecspi1 {
 	status = "okay";
+
+	spidev0: spidev@1 {
+		compatible = "toradex,evalspi";
+		reg = <0>;
+		spi-max-frequency = <18000000>;
+	};
+};
+
+/* Apalis SPI2 */
+&ecspi2 {
+	status = "okay";
+
+	spidev1: spidev@2 {
+		compatible = "toradex,evalspi";
+		reg = <0>;
+		spi-max-frequency = <800000>;
+	};
+
 };
 
 &hdmi_audio {
@@ -115,11 +124,13 @@
 };
 
 /*
- * GEN1_I2C: I2C1_SDA/SCL - Pressure Sensor I2C
+ * GEN1_I2C: I2C1_SDA/SCL on MXM3 209/211 OPTICS
  */
 &i2c1 {
 	status = "okay";
-	
+
+	/* M41T0M6 real time clock on carrier board */
+
 	rtc_i2c: rtc@68 {
 		compatible = "st,m41t0";
 		reg = <0x68>;
@@ -127,7 +138,7 @@
 };
 
 /*
- * GEN2_I2C: I2C2_SDA/SCL - LED I2c
+ * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 17/96 TEMPERATURE
  */
 &i2c2 {
 	status = "okay";
@@ -141,14 +152,8 @@
 };
 
 &iomuxc {
-	/*
-	 * Mux the Apalis GPIOs.
-	 * Note:
-	 * - GPIO7 is used for PCIe reset
-	 * - GPIO5, 6 are used by optional capacitive touch controller
-	 */
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_apalis_gpio8>;
+	pinctrl-0 = <&pinctrl_cytometry_gpio>;
 };
 
 &mxcfb1 {
@@ -170,20 +175,7 @@
 &pcie {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_reset_moci>;
-	reset-gpio = <&gpio1 2 0>;
 	reset-ep-gpio = <&gpio1 28 0>;
-	status = "okay";
-};
-
-&pwm1 {
-	status = "okay";
-};
-
-&pwm2 {
-	status = "okay";
-};
-
-&pwm3 {
 	status = "okay";
 };
 
@@ -209,11 +201,9 @@
 
 &uart2 {
 	status = "okay";
-#if 0
 	linux,rs485-enabled-at-boot-time;
 	rs485-rts-active-low;
 	rs485-rx-during-tx;
-#endif
 };
 
 &uart4 {

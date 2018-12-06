@@ -95,18 +95,15 @@
 #endif
 };
 
-&backlight {
-#if 0 /* PWM polarity: if 1 is brightest */
-	pwms = <&pwm4 0 5000000 0>;
-#if 0 /* Fusion 7 needs 10kHz PWM frequency */
-	pwms = <&pwm4 0 100000 0>;
-#endif
-#else /* PWM polarity: if 0 is brightest */
-	pwms = <&pwm4 0 5000000 1>;
-#endif
-	brightness-levels = <0 4 8 16 32 64 128 255>;
-	default-brightness-level = <6>;
+/* Apalis SPI1 */
+&ecspi1 {
 	status = "okay";
+
+	spidev0: spidev@1 {
+		compatible = "toradex,evalspi";
+		reg = <0>;
+		spi-max-frequency = <18000000>;
+	};
 };
 
 &hdmi_audio {
@@ -137,6 +134,60 @@
  */
 &i2c2 {
 	status = "okay";
+
+	adv7280: adv7280@21 {
+		compatible = "adv7280";
+		reg = <0x21>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ipu1_csi0 &pinctrl_cam_mclk>;
+		clocks = <&clks 200>;
+		clock-names = "csi_mclk";
+		DOVDD-supply = <&reg_3p3v>;
+		AVDD-supply = <&reg_3p3v>;
+		DVDD-supply = <&reg_3p3v>;
+		PVDD-supply = <&reg_3p3v>;
+		csi_id = <0>;
+		mclk = <24000000>;
+		mclk_source = <1>;
+		status = "okay";
+	};
+
+	/* Video ADC on Analog Camera Module */
+	adv7180: adv7180@21 {
+		compatible = "adv,adv7180";
+		reg = <0x21>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ipu1_csi0 &pinctrl_cam_mclk>;
+		clocks = <&clks 200>;
+		clock-names = "csi_mclk";
+		DOVDD-supply = <&reg_3p3v>; /* 3.3v */
+		AVDD-supply = <&reg_3p3v>;  /* 1.8v */
+		DVDD-supply = <&reg_3p3v>;  /* 1.8v */
+		PVDD-supply = <&reg_3p3v>;  /* 1.8v */
+		csi_id = <0>;
+		mclk = <24000000>;
+		mclk_source = <1>;
+		cvbs = <1>;
+		status = "disabled";
+	};
+
+	max9526: max9526@20 {
+		compatible = "maxim,max9526";
+		reg = <0x20>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ipu1_csi0 &pinctrl_cam_mclk>;
+		clocks = <&clks 200>;
+		clock-names = "csi_mclk";
+		DVDDIO-supply = <&reg_3p3v>; /* 3.3v */
+		AVDD-supply = <&reg_3p3v>;  /* 1.8v */
+		DVDD-supply = <&reg_3p3v>;  /* 1.8v */
+		csi_id = <0>;
+		mclk = <24000000>;
+		mclk_source = <1>;
+		cvbs = <1>;
+		status = "okay";
+	};
+
 };
 
 /*
@@ -147,14 +198,6 @@
 };
 
 &iomuxc {
-	/*
-	 * Mux the Apalis GPIOs.
-	 * Note:
-	 * - GPIO7 is used for PCIe reset
-	 * - GPIO5, 6 are used by optional capacitive touch controller
-	 */
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_apalis_gpio8>;
 
 	pinctrl_leds_ixora: leds-ixora {
 		fsl,pins = <
@@ -195,15 +238,11 @@
 	status = "okay";
 };
 
-&pwm1 {
+&reg_usb_otg_vbus {
 	status = "okay";
 };
 
-&pwm2 {
-	status = "okay";
-};
-
-&pwm3 {
+&reg_usb_host_vbus {
 	status = "okay";
 };
 
