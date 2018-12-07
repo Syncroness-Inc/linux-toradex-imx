@@ -13,6 +13,7 @@
 
 / {
 	aliases {
+		i2c0 = &i2cddc;
 		i2c1 = &i2c1;
 		i2c2 = &i2c2;
 		i2c3 = &i2c3;
@@ -28,6 +29,7 @@
 	};
 
 	aliases {
+		rtc0 = &rtc_i2c;
 		rtc1 = &snvs_rtc;
 	};
 
@@ -104,7 +106,6 @@
 		reg = <0>;
 		spi-max-frequency = <800000>;
 	};
-
 };
 
 &hdmi_audio {
@@ -130,7 +131,6 @@
 	status = "okay";
 
 	/* M41T0M6 real time clock on carrier board */
-
 	rtc_i2c: rtc@68 {
 		compatible = "st,m41t0";
 		reg = <0x68>;
@@ -140,15 +140,20 @@
 /*
  * GEN2_I2C, CAM: I2C3_SDA/SCL on MXM3 17/96 TEMPERATURE
  */
-&i2c2 {
+&i2c3 {
 	status = "okay";
 };
 
 /*
- * GEN3_I2C, CAM: I2C3_SDA/SCL - IR Sensor I2C
+ * DDC_I2C: I2C2_SDA/SCL on MXM3 205/207
  */
-&i2c3 {
+&i2cddc {
 	status = "okay";
+
+	hdmi_ddc: edid@50 {
+		compatible = "fsl,imx6-hdmi-i2c";
+		reg = <0x50>;
+	};
 };
 
 &iomuxc {
@@ -207,6 +212,10 @@
 };
 
 &uart4 {
+	status = "okay";
+};
+
+&uart5 {
 	status = "okay";
 };
 
