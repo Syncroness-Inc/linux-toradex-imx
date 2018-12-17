@@ -54,6 +54,14 @@
 		mxcfb3 = &mxcfb4;
 	};
 
+	onewire {
+		compatible = "w1-gpio";
+		gpios = <&gpio7 12 GPIO_ACTIVE_HIGH>;
+		pincrtl-names = "default";
+		pintctrl-0 = <&pinctrl_w1>;
+		status = "okay";
+	};
+
 	/* DDC_I2C: I2C2_SDA/SCL on MXM3 205/207 */
 	i2cddc: i2c@0 {
 		compatible = "i2c-gpio";
@@ -814,6 +822,12 @@
 		>;
 	};
 
+	pinctrl_w1: w1group {
+		fsl,pins = <
+			MX6QDL_PAD_GPIO_17__GPIO7_IO12     0x0001B0B0 /* TEMP2:            MXM-215 IMX6-204*/
+		>;
+	};
+
 	pinctrl_cytometry_gpio: cytometrygpiogrp {
 		fsl,pins = <
 			MX6QDL_PAD_CSI0_DAT4__GPIO5_IO22   0x0001B0B0 /* COMPRESSOR_IO:    MXM-221 IMX6-150*/
@@ -845,7 +859,6 @@
 			MX6QDL_PAD_GPIO_7__GPIO1_IO07      0x0001B0B0 /* SV_2A:            MXM-14  IMX6-7*/
 			MX6QDL_PAD_GPIO_8__GPIO1_IO08      0x0001B0B0 /* SV_2B:            MXM-12  IMX6-8*/
 			MX6QDL_PAD_GPIO_9__GPIO1_IO09      0x0001B0B0 /* SV_3A:            MXM-2   IMX6-9*/
-			MX6QDL_PAD_GPIO_17__GPIO7_IO12     0x0001B0B0 /* TEMP2:            MXM-215 IMX6-204*/
 			MX6QDL_PAD_KEY_COL4__GPIO4_IO14    0x0001B0B0 /* SV_1A:            MXM-18  IMX6-110*/
 			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15    0x0001B0B0 /* SV_1B:            MXM-16  IMX6-111*/
 			MX6QDL_PAD_NANDF_D4__GPIO2_IO04    0x0001B0B0 /* SV_8:             MXM-1   IMX6-36*/
