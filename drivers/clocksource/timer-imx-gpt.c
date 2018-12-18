@@ -621,12 +621,12 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 
 void capture_tach_pump(int chan, void* dev_id, struct timespec* ts)
 {
-	printk("Called capture_tach_pump - MXM 160");
+	return;
 }
 
 void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
 {
-	printk("Called catpure_tach_exhaust_fan - MXM 162");
+	return;
 }
 
 int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, unsigned long capflags, void *dev_id)
