@@ -54,6 +54,30 @@
 		mxcfb3 = &mxcfb4;
 	};
 
+	w1temp1 {
+                compatible = "w1-gpio";
+                gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_w1_temp1>;
+                status = "okay";
+        };
+
+        w1temp2 {
+                compatible = "w1-gpio";
+                gpios = <&gpio7 12 GPIO_ACTIVE_HIGH>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_w1_temp2>;
+                status = "okay";
+        };
+
+        w1temp3 {
+                compatible = "w1-gpio";
+                gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_w1_temp3>;
+                status = "okay";
+        };
+
 	/* DDC_I2C: I2C2_SDA/SCL on MXM3 205/207 */
 	i2cddc: i2c@0 {
 		compatible = "i2c-gpio";
@@ -1028,6 +1052,24 @@
 		>;
 	};
 
+        pinctrl_w1_temp1: w1temp1grp {
+                fsl,pins = < 
+			MX6QDL_PAD_EIM_DA3__GPIO3_IO03     0x0001B0B0 /* TEMP1:            MXM-299 IMX6-67*/
+                >;
+        };
+
+        pinctrl_w1_temp2: w1temp2grp {
+                fsl,pins = <
+			MX6QDL_PAD_GPIO_17__GPIO7_IO12     0x0001B0B0 /* TEMP2:            MXM-215 IMX6-204*/
+                >;
+        };
+
+        pinctrl_w1_temp3: w1temp3grp {
+                fsl,pins = <
+			MX6QDL_PAD_EIM_RW__GPIO2_IO26      0x0001B0B0 /* TEMP3:            MXM-233 IMX6-58*/
+                >;
+        };
+
 	pinctrl_cytometry_gpio: cytometrygpiogrp {
 		fsl,pins = <
 			MX6QDL_PAD_CSI0_DAT4__GPIO5_IO22   0x0001B0B0 /* COMPRESSOR_IO:    MXM-221 IMX6-150*/
@@ -1035,7 +1077,6 @@
 			MX6QDL_PAD_CSI0_DAT7__GPIO5_IO25   0x0001B0B0 /* ACCEL_INT1:       MXM-227 IMX6-153*/
 			MX6QDL_PAD_DISP0_DAT16__GPIO5_IO10 0x0001B0B0 /* FRONT_LED:        MXM-200 IMX6-138*/
 			MX6QDL_PAD_DISP0_DAT18__GPIO5_IO12 0x0001B0B0 /* ELEC_FAN_IO:      MXM-204 IMX6-140*/
-			MX6QDL_PAD_EIM_DA3__GPIO3_IO03     0x0001B0B0 /* TEMP1:            MXM-299 IMX6-67*/
 			MX6QDL_PAD_EIM_DA4__GPIO3_IO04     0x0001B0B0 /* TEC_STABLE:       MXM-297 IMX6-68*/
 			MX6QDL_PAD_EIM_DA5__GPIO3_IO05     0x0001B0B0 /* TEC_OKAY:         MXM-295 IMX6-69*/
 			MX6QDL_PAD_EIM_DA6__GPIO3_IO06     0x0001B0B0 /* TEC_EN:           MXM-293 IMX6-70*/
@@ -1053,13 +1094,11 @@
 			MX6QDL_PAD_EIM_A22__GPIO2_IO16     0x0001B0B0 /* TEST_LED1:        MXM-253 IMX6-48*/
 			MX6QDL_PAD_EIM_CS0__GPIO2_IO23     0x0001B0B0 /* LIQUID_LEVEL_IO:  MXM-235 IMX6-55*/
 			MX6QDL_PAD_EIM_OE__GPIO2_IO25      0x0001B0B0 /* ACCEL_INT2:       MXM-229 IMX6-57*/
-			MX6QDL_PAD_EIM_RW__GPIO2_IO26      0x0001B0B0 /* TEMP3:            MXM-233 IMX6-58*/
 			MX6QDL_PAD_GPIO_1__GPIO1_IO01      0x0001B0B0 /* SV_3B:            MXM-4   IMX6-1*/
 			MX6QDL_PAD_GPIO_6__GPIO1_IO06      0x0001B0B0 /* EJECT_CYL_RET_IO: MXM-17  IMX6-6*/
 			MX6QDL_PAD_GPIO_7__GPIO1_IO07      0x0001B0B0 /* SV_2A:            MXM-14  IMX6-7*/
 			MX6QDL_PAD_GPIO_8__GPIO1_IO08      0x0001B0B0 /* SV_2B:            MXM-12  IMX6-8*/
 			MX6QDL_PAD_GPIO_9__GPIO1_IO09      0x0001B0B0 /* SV_3A:            MXM-2   IMX6-9*/
-			MX6QDL_PAD_GPIO_17__GPIO7_IO12     0x0001B0B0 /* TEMP2:            MXM-215 IMX6-204*/
 			MX6QDL_PAD_KEY_COL4__GPIO4_IO14    0x0001B0B0 /* SV_1A:            MXM-18  IMX6-110*/
 			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15    0x0001B0B0 /* SV_1B:            MXM-16  IMX6-111*/
 			MX6QDL_PAD_NANDF_D4__GPIO2_IO04    0x0001B0B0 /* SV_8:             MXM-1   IMX6-36*/
