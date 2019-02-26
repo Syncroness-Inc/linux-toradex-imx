@@ -621,11 +621,13 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 
 void capture_tach_pump(int chan, void* dev_id, struct timespec* ts)
 {
+	printk("Called capture_tach_pump - MXM 160");
 	return;
 }
 
 void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
 {
+	printk("Called capture_tach_exhaust_fan - MXM 162");
 	return;
 }
 
