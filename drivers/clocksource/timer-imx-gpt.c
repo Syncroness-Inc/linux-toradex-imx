@@ -36,6 +36,9 @@
 #include <linux/platform_device.h>
 #include <linux/mxc_icap.h>
 #include <soc/imx/timer.h>
+#include <config/auto.conf>
+#include <linux/kernel.h>
+#include <linux/sysfs.h>
 
 /*
  * There are 4 versions of the timer hardware on Freescale MXC hardware.
@@ -621,13 +624,13 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 
 void capture_tach_pump(int chan, void* dev_id, struct timespec* ts)
 {
-	printk("Called capture_tach_pump - MXM 160");
+	printk("Called capture_tach_pump - MXM 160 - count %d", icap_channel[0].cnt_reg);
 	return;
 }
 
 void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
 {
-	printk("Called capture_tach_exhaust_fan - MXM 162");
+	printk("Called capture_tach_exhaust_fan - MXM 162 - count %d", icap_channel[1].cnt_reg);
 	return;
 }
 
@@ -681,7 +684,7 @@ int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, uns
 	ic->first_event = true;
 
 	imxtm->gpt->gpt_ic_enable(ic, mode);
-	imxtm->gpt->gpt_ic_irq_enable(ic);
+	//imxtm->gpt->gpt_ic_irq_enable(ic);
 
 out:
 	spin_unlock_irqrestore(&icap_lock, flags);
@@ -828,7 +831,9 @@ static int mxc_timer_probe(struct platform_device *pdev)
 
 static int mxc_timer_remove(struct platform_device *pdev)
 {
-       return 0;
+	mxc_free_input_capture(0, &dev_id_pump);
+	mcx_free_input_capture(1, &dev_id_exhaust);
+        return 0;
 }
 
 static const struct of_device_id timer_of_match[] = {
