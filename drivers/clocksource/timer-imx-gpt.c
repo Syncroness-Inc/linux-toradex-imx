@@ -623,8 +623,7 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 };
 
 #define TACH_NUM_SAMPLES 10
-#define TACH_MIN_FREQUENCY_HZ 10
-#define TACH_SAMPLES_MAX_SECONDS (TACH_NUM_SAMPLES/TACH_MIN_FREQENCY_HZ)
+#define TACH_TIMEOUT_TIME_SEC 10
 
 typedef struct
 {
@@ -643,19 +642,102 @@ static void init_tach_buffer(tach_buffer_t *buf)
 	mutex_unlock(&tach_lock);
 }
 
-static void capture_tach(int chan, void* dev_id, struct timespec* ts)
+static void add_tach_tick(tach_buffer_t *buf)
 {
-	printk("Called capture_tach0 - MXM 160 - count %d", icap_channel[0].cnt_reg);
+	struct timespec ts;
+	getnstimeofday(&ts);
+	mutex_lock(&tach_lock);
+        memcpy(&buf->ts[buf->head], &ts, sizeof(struct timespec));
+	buf->head++;
+	if (buf->head >= TACH_NUM_SAMPLES)
+	{
+		buf->head = 0;
+		buf->full = true;
+	}
+        mutex_unlock(&tach_lock);
+}
+
+static void copy_tach_data(tach_buffer_t *dest, tach_buffer_t *src)
+{
+	mutex_lock(&tach_lock);
+        memcpy(dest, src, sizeof(tach_buffer_t));
+        mutex_unlock(&tach_lock);
+
+}
+
+static void timespec_diff(struct timespec *start, struct timespec *stop, struct timespec *result)
+{
+	if ((stop->tv_nsec - start->tv_nsec) < 0) 
+	{
+		result->tv_sec = stop->tv_sec - start->tv_sec - 1;
+		result->tv_nsec = stop->tv_nsec - start->tv_nsec + 1000000000;
+	} 
+	else 
+	{
+		result->tv_sec = stop->tv_sec - start->tv_sec;
+		result->tv_nsec = stop->tv_nsec - start->tv_nsec;
+	}
+
 	return;
 }
 
-static ssize_t get_tach_value(struct device *dev, struct device_attribute *attr, char *buf)
+static void timespec_div(struct timespec *num, int den, struct timespec *result)
 {
-	return snprintf(buf, PAGE_SIZE, "%s", attr->attr.name);
+	result->tv_nsec = num->tv_sec % den;
+	result->tv_sec = num->tv_sec / den;
+	result->tv_nsec += num->tv_nsec / den;
 }
+
+static unsigned int get_tach_frequency(tach_buffer_t *_buf)
+{
+	float result = 0;
+	tach_buffer_t buf;
+	struct timespec now;
+
+	copy_tach_data(&buf, _buf);
+	getnstimeofday(&now);
+
+	if (buf.full)
+	{
+		struct timespec *start = buf.head==0 ? &buf.ts[TACH_NUM_SAMPLES - 1] : &buf.ts[buf.head - 1];
+		struct timespec *stop = &buf.ts[buf.head];
+		struct timespec diff, period;
+		
+		timespec_diff(start, &now, &diff);
+		if (diff.tv_sec < TACH_TIMEOUT_TIME_SEC)
+		{
+			unsigned int total_us;
+
+			timespec_diff(start, stop, &diff);
+			//timespec_div(&diff, TACH_NUM_SAMPLES, &period);
+			//total_us = period.tv_nsec / 1000;
+			//total_us = period.tv_sec * 1000000;
+			//result = 1 / ((float)total_us);
+		}
+	}
+
+	return result;
+}
+
+static void capture_tach(int chan, void* dev_id, struct timespec* ts)
+{
+	if ((chan < 2) && (chan > 0))
+		add_tach_tick(&tach_buffers[chan]);
+}
+
+ssize_t get_tach_value(struct device *dev, struct device_attribute *attr, char *buf);
 
 static DEVICE_ATTR(tach0, 0444, get_tach_value, NULL);
 static DEVICE_ATTR(tach1, 0444, get_tach_value, NULL);
+
+ssize_t get_tach_value(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (attr == &dev_attr_tach0)
+		return snprintf(buf, PAGE_SIZE, "%d", get_tach_frequency(&tach_buffers[0]));
+	if (attr == &dev_attr_tach1)
+                return snprintf(buf, PAGE_SIZE, "%d", get_tach_frequency(&tach_buffers[1]));
+	return snprintf(buf, PAGE_SIZE, "-1");
+}
 
 int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, unsigned long capflags, void *dev_id)
 {
@@ -828,6 +910,9 @@ static int mxc_timer_probe(struct platform_device *pdev)
 {
 	struct icap_channel *ic;
 	int i;
+
+	init_tach_buffer(&tach_buffers[0]);
+	init_tach_buffer(&tach_buffers[1]);	
 
 	/* setup the input capture channels */
 	for (i = 0; i < 2; i++) {
