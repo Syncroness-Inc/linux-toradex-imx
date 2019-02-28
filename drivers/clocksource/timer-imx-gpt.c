@@ -621,24 +621,19 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 	.gpt_ic_disable = imx6dl_gpt_ic_disable,
 };
 
-void capture_tach_pump(int chan, void* dev_id, struct timespec* ts)
+static void capture_tach(int chan, void* dev_id, struct timespec* ts)
 {
-	printk("Called capture_tach_pump - MXM 160 - count %d", icap_channel[0].cnt_reg);
+	printk("Called capture_tach0 - MXM 160 - count %d", icap_channel[0].cnt_reg);
 	return;
 }
 
-void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
+static ssize_t get_tach_value(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	printk("Called capture_tach_exhaust_fan - MXM 162 - count %d", icap_channel[1].cnt_reg);
-	return;
+	return snprintf(buf, PAGE_SIZE, "%s", attr->attr.name);
 }
 
-static ssize_t get_tach0_value(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return snprintf(buf, PAGE_SIZE, "42");
-}
-
-DEVICE_ATTR(tach0, 0444, get_tach0_value, NULL);
+static DEVICE_ATTR(tach0, 0444, get_tach_value, NULL);
+static DEVICE_ATTR(tach1, 0444, get_tach_value, NULL);
 
 int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, unsigned long capflags, void *dev_id)
 {
@@ -830,9 +825,10 @@ static int mxc_timer_probe(struct platform_device *pdev)
 	}
 	printk("gpt_input_capture: probed successfully");
 	printk("Request mxc input captures");
-	mxc_request_input_capture(0, capture_tach_pump, IRQF_TRIGGER_RISING, &dev_id_pump);
-	mxc_request_input_capture(1, capture_tach_exhaust_fan, IRQF_TRIGGER_RISING, &dev_id_exhaust); 
+	mxc_request_input_capture(0, capture_tach, IRQF_TRIGGER_RISING, &dev_id_pump);
+	mxc_request_input_capture(1, capture_tach, IRQF_TRIGGER_RISING, &dev_id_exhaust); 
 	device_create_file(&pdev->dev, &dev_attr_tach0);
+	device_create_file(&pdev->dev, &dev_attr_tach1);
 	return 0;
 }
 
@@ -841,6 +837,7 @@ static int mxc_timer_remove(struct platform_device *pdev)
 	mxc_free_input_capture(0, &dev_id_pump);
 	mxc_free_input_capture(1, &dev_id_exhaust);
 	device_remove_file(&pdev->dev, &dev_attr_tach0);
+	device_create_file(&pdev->dev, &dev_attr_tach1);
         return 0;
 }
 
