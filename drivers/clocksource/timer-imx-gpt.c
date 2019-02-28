@@ -36,7 +36,6 @@
 #include <linux/platform_device.h>
 #include <linux/mxc_icap.h>
 #include <soc/imx/timer.h>
-#include <config/auto.conf>
 #include <linux/kernel.h>
 #include <linux/sysfs.h>
 
@@ -634,6 +633,13 @@ void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
 	return;
 }
 
+static ssize_t get_tach0_value(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "42");
+}
+
+DEVICE_ATTR(tach0, 0444, get_tach0_value, NULL);
+
 int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, unsigned long capflags, void *dev_id)
 {
 	struct imx_timer *imxtm;
@@ -684,8 +690,8 @@ int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, uns
 	ic->first_event = true;
 
 	imxtm->gpt->gpt_ic_enable(ic, mode);
-	//imxtm->gpt->gpt_ic_irq_enable(ic);
-
+	imxtm->gpt->gpt_ic_irq_enable(ic);
+	
 out:
 	spin_unlock_irqrestore(&icap_lock, flags);
 	return ret;
@@ -826,13 +832,15 @@ static int mxc_timer_probe(struct platform_device *pdev)
 	printk("Request mxc input captures");
 	mxc_request_input_capture(0, capture_tach_pump, IRQF_TRIGGER_RISING, &dev_id_pump);
 	mxc_request_input_capture(1, capture_tach_exhaust_fan, IRQF_TRIGGER_RISING, &dev_id_exhaust); 
+	device_create_file(&pdev->dev, &dev_attr_tach0);
 	return 0;
 }
 
 static int mxc_timer_remove(struct platform_device *pdev)
 {
 	mxc_free_input_capture(0, &dev_id_pump);
-	mcx_free_input_capture(1, &dev_id_exhaust);
+	mxc_free_input_capture(1, &dev_id_exhaust);
+	device_remove_file(&pdev->dev, &dev_attr_tach0);
         return 0;
 }
 
