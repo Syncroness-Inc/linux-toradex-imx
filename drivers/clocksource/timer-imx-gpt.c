@@ -38,6 +38,7 @@
 #include <soc/imx/timer.h>
 #include <linux/kernel.h>
 #include <linux/sysfs.h>
+#include <linux/mutex.h>
 
 /*
  * There are 4 versions of the timer hardware on Freescale MXC hardware.
@@ -620,6 +621,27 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 	.gpt_ic_enable = imx6dl_gpt_ic_enable,
 	.gpt_ic_disable = imx6dl_gpt_ic_disable,
 };
+
+#define TACH_NUM_SAMPLES 10
+#define TACH_MIN_FREQUENCY_HZ 10
+#define TACH_SAMPLES_MAX_SECONDS (TACH_NUM_SAMPLES/TACH_MIN_FREQENCY_HZ)
+
+typedef struct
+{
+	struct timespec ts[TACH_NUM_SAMPLES];
+	bool full;
+	unsigned char head;
+} tach_buffer_t;
+
+static tach_buffer_t tach_buffers[2];
+static DEFINE_MUTEX(tach_lock);
+
+static void init_tach_buffer(tach_buffer_t *buf)
+{
+	mutex_lock(&tach_lock);
+	memset(tach_buffers, 0, sizeof(tach_buffers));
+	mutex_unlock(&tach_lock);
+}
 
 static void capture_tach(int chan, void* dev_id, struct timespec* ts)
 {
