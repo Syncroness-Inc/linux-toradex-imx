@@ -690,7 +690,7 @@ static void timespec_div(struct timespec *num, int den, struct timespec *result)
 
 static unsigned int get_tach_frequency(tach_buffer_t *_buf)
 {
-	float result = 0;
+	unsigned int result = 0;
 	tach_buffer_t buf;
 	struct timespec now;
 
@@ -709,10 +709,10 @@ static unsigned int get_tach_frequency(tach_buffer_t *_buf)
 			unsigned int total_us;
 
 			timespec_diff(start, stop, &diff);
-			//timespec_div(&diff, TACH_NUM_SAMPLES, &period);
-			//total_us = period.tv_nsec / 1000;
-			//total_us = period.tv_sec * 1000000;
-			//result = 1 / ((float)total_us);
+			timespec_div(&diff, TACH_NUM_SAMPLES, &period);
+			total_us = period.tv_nsec;
+			total_us /= 1000;
+			result = 1000000 / total_us;
 		}
 	}
 
