@@ -699,10 +699,11 @@ static unsigned int get_tach_frequency(tach_buffer_t *_buf)
 
 	if (buf.full)
 	{
-		struct timespec *start = buf.head==0 ? &buf.ts[TACH_NUM_SAMPLES - 1] : &buf.ts[buf.head - 1];
+		struct timespec *start = &buf.ts[(buf.head + 1) % TACH_NUM_SAMPLES]; 
 		struct timespec *stop = &buf.ts[buf.head];
 		struct timespec diff, period;
-		
+		int i;
+
 		timespec_diff(start, &now, &diff);
 		if (diff.tv_sec < TACH_TIMEOUT_TIME_SEC)
 		{
