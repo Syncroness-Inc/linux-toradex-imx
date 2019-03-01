@@ -623,7 +623,7 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 };
 
 #define TACH_NUM_SAMPLES 10
-#define TACH_TIMEOUT_TIME_SEC 10
+#define TACH_TIMEOUT_TIME_SEC 1
 
 typedef struct
 {
@@ -699,8 +699,8 @@ static unsigned int get_tach_frequency(tach_buffer_t *_buf)
 
 	if (buf.full)
 	{
-		struct timespec *start = &buf.ts[(buf.head + 1) % TACH_NUM_SAMPLES]; 
-		struct timespec *stop = &buf.ts[buf.head];
+		struct timespec *start = &buf.ts[buf.head]; 
+		struct timespec *stop = buf.head==0 ? &buf.ts[TACH_NUM_SAMPLES-1] : &buf.ts[buf.head-1];
 		struct timespec diff, period;
 
 		timespec_diff(start, &now, &diff);
