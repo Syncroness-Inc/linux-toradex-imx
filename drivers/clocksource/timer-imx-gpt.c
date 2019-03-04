@@ -36,6 +36,9 @@
 #include <linux/platform_device.h>
 #include <linux/mxc_icap.h>
 #include <soc/imx/timer.h>
+#include <linux/kernel.h>
+#include <linux/sysfs.h>
+#include <linux/mutex.h>
 
 /*
  * There are 4 versions of the timer hardware on Freescale MXC hardware.
@@ -619,14 +622,121 @@ static const struct imx_gpt_data imx6dl_gpt_data = {
 	.gpt_ic_disable = imx6dl_gpt_ic_disable,
 };
 
-void capture_tach_pump(int chan, void* dev_id, struct timespec* ts)
+#define TACH_NUM_SAMPLES 10
+#define TACH_TIMEOUT_TIME_SEC 1
+
+typedef struct
 {
+	struct timespec ts[TACH_NUM_SAMPLES];
+	bool full;
+	unsigned char head;
+} tach_buffer_t;
+
+static tach_buffer_t tach_buffers[2];
+static DEFINE_MUTEX(tach_lock);
+
+static void init_tach_buffer(tach_buffer_t *buf)
+{
+	mutex_lock(&tach_lock);
+	memset(tach_buffers, 0, sizeof(tach_buffers));
+	mutex_unlock(&tach_lock);
+}
+
+static void add_tach_tick(tach_buffer_t *buf)
+{
+	struct timespec ts;
+	getnstimeofday(&ts);
+	mutex_lock(&tach_lock);
+        memcpy(&buf->ts[buf->head], &ts, sizeof(struct timespec));
+	buf->head++;
+	if (buf->head >= TACH_NUM_SAMPLES)
+	{
+		buf->head = 0;
+		buf->full = true;
+	}
+        mutex_unlock(&tach_lock);
+}
+
+static void copy_tach_data(tach_buffer_t *dest, tach_buffer_t *src)
+{
+	mutex_lock(&tach_lock);
+        memcpy(dest, src, sizeof(tach_buffer_t));
+        mutex_unlock(&tach_lock);
+
+}
+
+static void timespec_diff(struct timespec *start, struct timespec *stop, struct timespec *result)
+{
+	if ((stop->tv_nsec - start->tv_nsec) < 0) 
+	{
+		result->tv_sec = stop->tv_sec - start->tv_sec - 1;
+		result->tv_nsec = stop->tv_nsec - start->tv_nsec + 1000000000;
+	} 
+	else 
+	{
+		result->tv_sec = stop->tv_sec - start->tv_sec;
+		result->tv_nsec = stop->tv_nsec - start->tv_nsec;
+	}
+
 	return;
 }
 
-void capture_tach_exhaust_fan(int chan, void* dev_id, struct timespec* ts)
+static void timespec_div(struct timespec *num, int den, struct timespec *result)
 {
-	return;
+	result->tv_nsec = num->tv_sec % den;
+	result->tv_sec = num->tv_sec / den;
+	result->tv_nsec += num->tv_nsec / den;
+}
+
+static unsigned int get_tach_frequency(tach_buffer_t *_buf)
+{
+	unsigned int result = 0;
+	tach_buffer_t buf;
+	struct timespec now;
+
+	copy_tach_data(&buf, _buf);
+	getnstimeofday(&now);
+
+	if (buf.full)
+	{
+		struct timespec *start = &buf.ts[buf.head]; 
+		struct timespec *stop = buf.head==0 ? &buf.ts[TACH_NUM_SAMPLES-1] : &buf.ts[buf.head-1];
+		struct timespec diff, period;
+
+		timespec_diff(start, &now, &diff);
+		if (diff.tv_sec < TACH_TIMEOUT_TIME_SEC)
+		{
+			unsigned int total_us;
+
+			timespec_diff(start, stop, &diff);
+			timespec_div(&diff, TACH_NUM_SAMPLES - 1, &period);
+			total_us = period.tv_nsec;
+			total_us /= 1000;
+			result = 1000000 / total_us;
+		}
+	}
+
+	return result;
+}
+
+static void capture_tach(int chan, void* dev_id, struct timespec* ts)
+{
+	if ((chan < 2) && (chan > 0))
+		add_tach_tick(&tach_buffers[chan]);
+}
+
+ssize_t get_tach_value(struct device *dev, struct device_attribute *attr, char *buf);
+
+static DEVICE_ATTR(tach0, 0444, get_tach_value, NULL);
+static DEVICE_ATTR(tach1, 0444, get_tach_value, NULL);
+
+ssize_t get_tach_value(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (attr == &dev_attr_tach0)
+		return snprintf(buf, PAGE_SIZE, "%d", get_tach_frequency(&tach_buffers[0]));
+	if (attr == &dev_attr_tach1)
+                return snprintf(buf, PAGE_SIZE, "%d", get_tach_frequency(&tach_buffers[1]));
+	return snprintf(buf, PAGE_SIZE, "-1");
 }
 
 int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, unsigned long capflags, void *dev_id)
@@ -680,7 +790,7 @@ int mxc_request_input_capture(unsigned int chan, mxc_icap_handler_t handler, uns
 
 	imxtm->gpt->gpt_ic_enable(ic, mode);
 	imxtm->gpt->gpt_ic_irq_enable(ic);
-
+	
 out:
 	spin_unlock_irqrestore(&icap_lock, flags);
 	return ret;
@@ -801,6 +911,9 @@ static int mxc_timer_probe(struct platform_device *pdev)
 	struct icap_channel *ic;
 	int i;
 
+	init_tach_buffer(&tach_buffers[0]);
+	init_tach_buffer(&tach_buffers[1]);	
+
 	/* setup the input capture channels */
 	for (i = 0; i < 2; i++) {
 		ic = &icap_channel[i];
@@ -819,14 +932,20 @@ static int mxc_timer_probe(struct platform_device *pdev)
 	}
 	printk("gpt_input_capture: probed successfully");
 	printk("Request mxc input captures");
-	mxc_request_input_capture(0, capture_tach_pump, IRQF_TRIGGER_RISING, &dev_id_pump);
-	mxc_request_input_capture(1, capture_tach_exhaust_fan, IRQF_TRIGGER_RISING, &dev_id_exhaust); 
+	mxc_request_input_capture(0, capture_tach, IRQF_TRIGGER_RISING, &dev_id_pump);
+	mxc_request_input_capture(1, capture_tach, IRQF_TRIGGER_RISING, &dev_id_exhaust); 
+	device_create_file(&pdev->dev, &dev_attr_tach0);
+	device_create_file(&pdev->dev, &dev_attr_tach1);
 	return 0;
 }
 
 static int mxc_timer_remove(struct platform_device *pdev)
 {
-       return 0;
+	mxc_free_input_capture(0, &dev_id_pump);
+	mxc_free_input_capture(1, &dev_id_exhaust);
+	device_remove_file(&pdev->dev, &dev_attr_tach0);
+	device_create_file(&pdev->dev, &dev_attr_tach1);
+        return 0;
 }
 
 static const struct of_device_id timer_of_match[] = {
